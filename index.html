@@ -1,16 +1,22 @@
-<!DOCTYPE html>
+(<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
-<style>body{background:gray;margin:0;display:flex;align-items:center;justify-content:center;height:100vh;}
-#main{border-radius:50%;width:min(90vw,90vh);height:min(90vw,90vh);background-color:white;border:min(2vw,2vh) solid rgb(62,62,62);}
+<style>body{background:gray;margin:0;display:flex;align-items:center;justify-content:center;height:100vh;}*{cursor:default;&::selection{color:black;}}
+#main{border-radius:50%;width:min(90vw,90vh);height:min(90vw,90vh);background-color:white;border:min(2vw,2vh) solid rgb(62,62,62);position:absolute;}
 #sec,#min,#hour{position:absolute;background-color:black;width:min(2vw,2vh);height:min(45vw,45vh);left:calc(50vw - min(1vw,1vh));top:calc(50vh - min(45vw,45vh));
 transform-origin:50% 100%;z-index:8;transition:rotate 1s linear;}
-#sec{width:min(1vw,1vh);background:red;left:calc(50vw - min(0.5vw,0.5vh));height:min(50vw,50vh);transform-origin:50% min(45vw,45vh);z-index:10;transition:none;}
+#sec{width:min(1vw,1vh);background:red;left:calc(50vw - min(0.5vw,0.5vh));height:min(55vw,55vh);transform-origin:50% min(45vw,45vh);z-index:10;transition:none;}
 #hour{height:min(35vw,35vh);transform-origin:50% 100%;top:calc(50vh - min(35vw,35vh));z-index:9;}
 .time{width:min(2vw,2vh);z-index:5;height:min(10vw,10vh);transform-origin:50% min(45vw,45vh);top:calc(50vh - min(45vw,45vh));position:absolute;background:black;}
+#middle{border-radius:50%;width:min(2vw,2vh);height:min(2vw,2vh);position:absolute;z-index:11;background:black;border:min(1vw,1vh) solid red;}
+
+#main2{width:min(87vw,87vh);height:min(50vw,50vh);border:min(3vw,3vh) solid rgb(30,30,30);background:rgb(50,50,50);position:absolute;display:flex;padding:min(7vw,7vh) min(3vw,3vh);box-sizing:border-box;
+& p{font-size:min(26vw,26vh);color:white;margin:0;height:fit-content;}
+}
+#sec2{font-size:min(13vw,13vh) !important;margin-top:min(2vw,2vh) !important;}
 </style>
 </head>
 <body>
@@ -32,15 +38,58 @@ transform-origin:50% 100%;z-index:8;transition:rotate 1s linear;}
 <div style="rotate:300deg;" class="time"></div>
 <div style="rotate:330deg;" class="time"></div>
 
+<div id="middle"></div>
 
-<script>let sec=document.getElementById('sec'),min=document.getElementById('min'),hour=document.getElementById('hour');
+
+<div id="main2" style="display:none;">
+    <p id="hour2">20</p><p style="font-size:min(22vw,22vh);">:</p>
+    <p id="min2">00</p>
+    <p id="sec2">00</p>
+</div>
+
+<script>let sec=document.getElementById('sec'),min=document.getElementById('min'),hour=document.getElementById('hour'),n=0,clock=document.getElementById('main');
 document.onload=a();setInterval(()=>{a()},1000);
 function a(){
     let time=new Date();
     sec.style.rotate=time.getSeconds()*6+'deg';
     min.style.rotate=time.getMinutes()*6+time.getSeconds()*0.1+'deg';
     hour.style.rotate=time.getHours()*(360/12)+time.getMinutes()*0.5  +'deg';
+    if(time.getSeconds()<10){document.getElementById('sec2').innerHTML='0'+time.getSeconds();}else{document.getElementById('sec2').innerHTML=time.getSeconds();}
+    if(time.getMinutes()<10){document.getElementById('min2').innerHTML='0'+time.getMinutes();}else{document.getElementById('min2').innerHTML=time.getMinutes();}
+    if(time.getHours()<10){document.getElementById('hour2').innerHTML='0'+time.getHours();}else{document.getElementById('hour2').innerHTML=time.getHours();}
 }
+document.addEventListener("keypress",function(e){
+    if (e.key==" "){
+        n = 1-n;
+        switch_clocks();
+    }
+})
+function switch_clocks(){
+if(n==1){
+    clock.style.display="none";
+    min.style.display="none";
+    sec.style.display="none";
+    hour.style.display="none";
+    for(let i=0;document.getElementsByClassName('time').length>i;i++){
+        document.getElementsByClassName('time')[i].style.display="none";
+    }
+    document.getElementById('middle').style.display="none";
+    document.getElementById('main2').style.display="flex";
+
+}else{
+    clock.style.display="block";
+    min.style.display="block";
+    sec.style.display="block";
+    hour.style.display="block";
+    for(let i=0;document.getElementsByClassName('time').length>i;i++){
+        document.getElementsByClassName('time')[i].style.display="block";
+    }
+    document.getElementById('middle').style.display="block";
+    document.getElementById('main2').style.display="none";
+
+}
+}
+document.addEventListener("dblclick",function(){n = 1-n;switch_clocks();})
 </script>
 </body>
 </html>
