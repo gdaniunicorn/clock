@@ -1,4 +1,4 @@
-(<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -16,7 +16,10 @@ transform-origin:50% 100%;z-index:8;transition:rotate 1s linear;}
 #main2{width:min(87vw,87vh);height:min(50vw,50vh);border:min(3vw,3vh) solid rgb(30,30,30);background:rgb(50,50,50);position:absolute;display:flex;padding:min(7vw,7vh) min(3vw,3vh);box-sizing:border-box;
 & p{font-size:min(26vw,26vh);color:white;margin:0;height:fit-content;}
 }
-#sec2{font-size:min(13vw,13vh) !important;margin-top:min(2vw,2vh) !important;}
+#indexes{display:flex; flex-direction:column;justify-content:flex-start;margin-left:10px;align-items:center;}
+#sec2,#am{font-size:min(13vw,13vh) !important;margin-top:min(2vw,2vh) !important;width:120px;text-align:center;}
+#am{margin-top:0 !important;font-family:monospace;font-size:min(10vw, 10vh) !important;margin-top:-25px !important;}
+
 </style>
 </head>
 <body>
@@ -42,9 +45,12 @@ transform-origin:50% 100%;z-index:8;transition:rotate 1s linear;}
 
 
 <div id="main2" style="display:none;">
-    <p id="hour2">20</p><p style="font-size:min(22vw,22vh);">:</p>
-    <p id="min2">00</p>
-    <p id="sec2">00</p>
+    <p id="hour2"  style="width:1.05em;text-align:center;">20</p><p style="font-size:min(22vw,22vh);">:</p>
+    <p id="min2" style="width:1.05em;text-align:center;">00</p>
+    <div id="indexes">
+        <p id="sec2">00</p>
+        <p id="am" style="display: none;">AM</p>
+    </div>
 </div>
 
 <script>let sec=document.getElementById('sec'),min=document.getElementById('min'),hour=document.getElementById('hour'),n=0,clock=document.getElementById('main');
@@ -56,15 +62,29 @@ function a(){
     hour.style.rotate=time.getHours()*(360/12)+time.getMinutes()*0.5  +'deg';
     if(time.getSeconds()<10){document.getElementById('sec2').innerHTML='0'+time.getSeconds();}else{document.getElementById('sec2').innerHTML=time.getSeconds();}
     if(time.getMinutes()<10){document.getElementById('min2').innerHTML='0'+time.getMinutes();}else{document.getElementById('min2').innerHTML=time.getMinutes();}
-    if(time.getHours()<10){document.getElementById('hour2').innerHTML='0'+time.getHours();}else{document.getElementById('hour2').innerHTML=time.getHours();}
+    if (n==1){
+        if(time.getHours()<10){document.getElementById('hour2').innerHTML='0'+time.getHours();}else{document.getElementById('hour2').innerHTML=time.getHours();}
+    }else if (n==2){
+        if(time.getHours()<13){
+            if(time.getHours()<10){document.getElementById('hour2').innerHTML='0'+time.getHours();}else{document.getElementById('hour2').innerHTML=time.getHours();}
+            document.getElementById('am').innerHTML="AM";
+        }else{
+            if((time.getHours()-12)<10){document.getElementById('hour2').innerHTML='0'+(time.getHours()-12);}else{document.getElementById('hour2').innerHTML=time.getHours()-12;}
+            document.getElementById('am').innerHTML="PM";
+        }
+    }
 }
 document.addEventListener("keypress",function(e){
     if (e.key==" "){
-        n = 1-n;
+        if (n==0){n=1}
+        else if (n==1){n=2}
+        else if (n==2){n=0}
+        
         switch_clocks();
     }
 })
 function switch_clocks(){
+    let time=new Date();
 if(n==1){
     clock.style.display="none";
     min.style.display="none";
@@ -74,9 +94,12 @@ if(n==1){
         document.getElementsByClassName('time')[i].style.display="none";
     }
     document.getElementById('middle').style.display="none";
+    if(time.getSeconds()<10){document.getElementById('sec2').innerHTML='0'+time.getSeconds();}else{document.getElementById('sec2').innerHTML=time.getSeconds();}
+    if(time.getMinutes()<10){document.getElementById('min2').innerHTML='0'+time.getMinutes();}else{document.getElementById('min2').innerHTML=time.getMinutes();}
+    if(time.getHours()<10){document.getElementById('hour2').innerHTML='0'+time.getHours();}else{document.getElementById('hour2').innerHTML=time.getHours();}
     document.getElementById('main2').style.display="flex";
 
-}else{
+}else if (n==0){
     clock.style.display="block";
     min.style.display="block";
     sec.style.display="block";
@@ -86,7 +109,18 @@ if(n==1){
     }
     document.getElementById('middle').style.display="block";
     document.getElementById('main2').style.display="none";
+    document.getElementById('am').style.display="none";
 
+} else if (n==2){
+    if(time.getHours()<13){
+        if(time.getHours()<10){document.getElementById('hour2').innerHTML='0'+time.getHours();}else{document.getElementById('hour2').innerHTML=time.getHours();}
+        document.getElementById('am').innerHTML="AM";}
+    else{
+        if(time.getHours()-(12<10)){document.getElementById('hour2').innerHTML='0'+(time.getHours()-12);}else{document.getElementById('hour2').innerHTML=time.getHours()-12;}
+        document.getElementById('am').innerHTML="PM";
+    }
+    clock.style.display="none";
+    document.getElementById('am').style.display="block";
 }
 }
 document.addEventListener("dblclick",function(){n = 1-n;switch_clocks();})
